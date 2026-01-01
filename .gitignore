@@ -1,5 +1,6 @@
 # Database configuration
 api/db.php
+api/email_service.php
 
 # Test files
 test_connection.php

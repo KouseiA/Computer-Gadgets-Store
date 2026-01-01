@@ -8,8 +8,7 @@ function sendOrderReceipt($orderData, $orderItems)
     // IMPORTANT: Replace 'YOUR_BREVO_API_KEY' with your actual Brevo API Key
     // You can get one at https://app.brevo.com/settings/keys/api
     // -------------------------------------------------------------------------
-    $apiKey = 'YOUR_BREVO_API_KEY'; // Replace with your actual API key
-
+    $apiKey = 'YOUR_BREVO_API_KEY';
 
     $url = 'https://api.brevo.com/v3/smtp/email';
 
