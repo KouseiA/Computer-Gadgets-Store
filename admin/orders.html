@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Order Approval - AULA Admin</title>
+    <link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="admin.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Libre+Barcode+39&family=Inter:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <!-- Preload Barcode Font -->
+    <div
+      style="
+        font-family: 'Libre Barcode 39';
+        position: absolute;
+        visibility: hidden;
+        pointer-events: none;
+      "
+    >
+      barcode-preloader
+    </div>
+
+    <div class="d-flex" id="wrapper">
+      <div id="sidebar-wrapper">
+        <div class="sidebar-heading">AULA Admin</div>
+        <div class="list-group list-group-flush">
+          <a
+            href="dashboard.html"
+            class="list-group-item list-group-item-action"
+          >
+            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+          </a>
+          <a
+            href="orders.html"
+            class="list-group-item list-group-item-action active"
+          >
+            <i class="fas fa-shopping-cart me-2"></i>Orders
+          </a>
+          <a
+            href="products.html"
+            class="list-group-item list-group-item-action"
+          >
+            <i class="fas fa-box me-2"></i>Products
+          </a>
+          <a
+            href="inventory.html"
+            class="list-group-item list-group-item-action"
+          >
+            <i class="fas fa-warehouse me-2"></i>Inventory
+          </a>
+          <a href="users.html" class="list-group-item list-group-item-action">
+            <i class="fas fa-users me-2"></i>Users
+          </a>
+          <a href="reports.html" class="list-group-item list-group-item-action">
+            <i class="fas fa-chart-line me-2"></i>Reports
+          </a>
+        </div>
+      </div>
+
+      <div id="page-content-wrapper">
+        <nav class="navbar navbar-expand-lg">
+          <div class="container-fluid">
+            <h4 class="mb-0">Order Management</h4>
+            <div class="ms-auto d-flex align-items-center">
+              <span class="me-3 text-muted"
+                >Welcome,
+                <span id="adminName" class="fw-bold text-white"
+                  >Admin</span
+                ></span
+              >
+              <a
+                href="#"
+                id="adminLogoutBtn"
+                class="btn btn-outline-danger btn-sm"
+                >Logout</a
+              >
+            </div>
+          </div>
+        </nav>
+
+        <div class="container-fluid">
+          <div class="card">
+            <div class="card-header bg-transparent py-3">
+              <h5 class="mb-0">Customer Orders</h5>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                  <thead>
+                    <tr>
+                      <th>Order ID</th>
+                      <th>Customer</th>
+                      <th>Date</th>
+                      <th>Total</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="ordersTableBody">
+                    <!-- Populated by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order Details Modal -->
+    <div class="modal fade" id="orderModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Order Details</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div id="orderModalContent"></div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="button" class="btn btn-success" id="approveOrderBtn">
+              Approve Order
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="waybillPrintArea"></div>
+
+    <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="admin.js?v=logout_path_fix_v4"></script>
+    <script>
+      let currentOrderId = null;
+
+      document.addEventListener("DOMContentLoaded", () => {
+        renderOrders();
+
+        document
+          .getElementById("approveOrderBtn")
+          .addEventListener("click", () => {
+            if (currentOrderId) {
+              updateOrderStatus(currentOrderId, "Shipped"); // Simple approval flow: Pending -> Shipped
+              const modal = bootstrap.Modal.getInstance(
+                document.getElementById("orderModal")
+              );
+              modal.hide();
+            }
+          });
+      });
+
+      let allOrders = []; // Store fetched orders for modal access
+
+      async function renderOrders() {
+        const tbody = document.getElementById("ordersTableBody");
+        tbody.innerHTML =
+          '<tr><td colspan="6" class="text-center p-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></td></tr>';
+
+        try {
+          const response = await fetch("../api/admin_orders.php");
+          const orders = await response.json();
+
+          if (orders.error) {
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center p-4 text-danger">Error: ${orders.error}</td></tr>`;
+            return;
+          }
+
+          allOrders = orders; // Save for modal usage
+
+          if (!orders.length) {
+            tbody.innerHTML =
+              '<tr><td colspan="6" class="text-center p-4">No orders found.</td></tr>';
+            return;
+          }
+
+          tbody.innerHTML = orders
+            .map(
+              (o) => `
+                    <tr>
+                        <td>${o.id}</td>
+                        <td>
+                            <div>${o.customer?.firstName || "Guest"} ${
+                o.customer?.lastName || ""
+              }</div>
+                            <small class="text-muted">${
+                              o.customer?.email || "No email"
+                            }</small>
+                        </td>
+                        <td>${new Date(o.date).toLocaleDateString()} ${new Date(
+                o.date
+              ).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}</td>
+                        <td>₱${parseFloat(o.total).toLocaleString(undefined, {
+                          minimumFractionDigits: 2,
+                        })}</td>
+                        <td><span class="badge bg-${getStatusColor(
+                          o.status
+                        )}">${o.status}</span></td>
+                        <td>
+                            <div class="btn-group">
+                                <button class="btn btn-sm btn-outline-info" onclick="viewOrder('${
+                                  o.id
+                                }')" title="View Details"><i class="fas fa-eye"></i></button>
+                                <button class="btn btn-sm btn-outline-primary" onclick="packAndPrint('${
+                                  o.id
+                                }')" ${
+                o.status === "Shipped" || o.status === "Delivered"
+                  ? "disabled"
+                  : ""
+              } title="Pack & Print Waybill"><i class="fas fa-box-open"></i></button>
+                                <button class="btn btn-sm btn-outline-warning" onclick="printWaybill('${
+                                  o.id
+                                }')" title="Re-print Waybill"><i class="fas fa-print"></i></button>
+                                <button class="btn btn-sm btn-outline-success" onclick="updateOrderStatus('${
+                                  o.id
+                                }', 'Shipped')" ${
+                o.status === "Shipped" || o.status === "Delivered"
+                  ? "disabled"
+                  : ""
+              } title="Mark as Shipped"><i class="fas fa-check"></i></button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="updateOrderStatus('${
+                                  o.id
+                                }', 'Cancelled')" ${
+                o.status === "Cancelled" ? "disabled" : ""
+              } title="Cancel"><i class="fas fa-times"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `
+            )
+            .join("");
+        } catch (e) {
+          console.error(e);
+          tbody.innerHTML =
+            '<tr><td colspan="6" class="text-center p-4 text-danger">Failed to load orders.</td></tr>';
+        }
+      }
+
+      window.viewOrder = function (id) {
+        currentOrderId = id;
+        const order = allOrders.find((o) => o.id === id);
+        if (!order) return;
+
+        const content = document.getElementById("orderModalContent");
+        content.innerHTML = `
+                <div class="row mb-3">
+                    <div class="col-6"><strong>Order ID:</strong> ${
+                      order.id
+                    }</div>
+                    <div class="col-6 text-end"><strong>Date:</strong> ${new Date(
+                      order.date
+                    ).toLocaleString()}</div>
+                </div>
+                <h6>Items:</h6>
+                <ul class="list-group mb-3">
+                    ${order.items
+                      .map(
+                        (i) => `
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>${i.title} <small class="text-muted">x${
+                          i.qty
+                        }</small></div>
+                            <span>₱${parseFloat(
+                              i.price
+                            ).toLocaleString()}</span>
+                        </li>
+                    `
+                      )
+                      .join("")}
+                </ul>
+                <div class="alert alert-secondary">
+                    <strong>Shipping To:</strong><br>
+                    ${order.customer?.firstName || "Guest"} ${
+          order.customer?.lastName || ""
+        }<br>
+                    ${order.shipping?.address || "No Address"}, ${
+          order.shipping?.barangay || ""
+        }<br>
+                    ${order.shipping?.city || ""}, ${
+          order.shipping?.province || ""
+        } ${order.shipping?.postalCode || ""}
+                </div>
+            `;
+
+        const modal = new bootstrap.Modal(
+          document.getElementById("orderModal")
+        );
+        modal.show();
+      };
+
+      window.updateOrderStatus = async function (id, status) {
+        if (!confirm(`Are you sure you want to mark order ${id} as ${status}?`))
+          return;
+
+        try {
+          const response = await fetch("../api/update_order_status.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ order_id: id, status: status }),
+          });
+          const result = await response.json();
+
+          if (result.error) {
+            alert("Error: " + result.error);
+          } else {
+            renderOrders(); // Refresh table
+          }
+        } catch (e) {
+          console.error(e);
+          alert("Failed to update status.");
+        }
+      };
+
+      window.packAndPrint = function (id) {
+        updateOrderStatus(id, "Shipped");
+        printWaybill(id);
+      };
+
+      window.printWaybill = function (id) {
+        const order = allOrders.find((o) => o.id === id);
+        if (!order) return;
+
+        const printArea = document.getElementById("waybillPrintArea");
+        const trackingBase = order.trackingNumber
+          ? String(order.trackingNumber)
+          : "PH" + Math.random().toString().slice(2, 15);
+        const rawTracking = trackingBase.replace(/\s/g, "");
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${id}`;
+
+        printArea.innerHTML = `
+                <div class="spx-label">
+                    <div class="spx-header">
+                        <div class="spx-logo-box">
+                            <div class="spx-logo-text">SPX</div>
+                            <div class="spx-logo-sub">EXPRESS</div>
+                        </div>
+                        <div class="spx-header-info">
+                            <div class="spx-header-top-row">
+                                <div class="spx-sort-code">11-090</div>
+                                <div class="spx-sub-sort">27-3A-06</div>
+                            </div>
+                            <div class="spx-header-bottom-row">
+                                D-08-SRMN1.2-BU [H]<br>
+                                RTS Sort Code: RTS-C-254-BNA-BCI-00<br>
+                                E-Alabang San jose
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="spx-order-id-section">
+                        Order ID: ${id.replace("ORD-", "")}
+                    </div>
+
+                    <div class="spx-barcode-section">
+                        <div class="spx-barcode">*${rawTracking}*</div>
+                        <div class="spx-barcode-text">${rawTracking}</div>
+                    </div>
+
+                    <div class="spx-address-section">
+                        <div class="spx-vertical-label"><span>BUYER</span></div>
+                        <div class="spx-address-content">
+                            <div style="font-weight: 900; font-size: 36px; text-transform: uppercase;">${
+                              order.customer.firstName
+                            } ${order.customer.lastName}</div>
+                            <div style="font-weight: bold; font-size: 24px; margin-top: 10px;">
+                                ${order.shipping.address}, ${
+          order.shipping.barangay
+        }, ${order.shipping.city}, ${order.shipping.province}, ${
+          order.shipping.postalCode
+        }
+                            </div>
+                            <div class="spx-address-grid">
+                                <div>District<br><strong>${
+                                  order.shipping.barangay
+                                }</strong></div>
+                                <div>City<br><strong>${
+                                  order.shipping.city
+                                }</strong></div>
+                                <div>Zip Code<br><strong>${
+                                  order.shipping.postalCode
+                                }</strong></div>
+                            </div>
+                        </div>
+                        <div style="position: absolute; right: 20px; top: 20px; font-weight: 900; font-size: 32px;">PDG</div>
+                    </div>
+
+                    <div class="spx-address-section">
+                        <div class="spx-vertical-label"><span>SELLER</span></div>
+                        <div class="spx-address-content">
+                            <div style="font-weight: 900; font-size: 36px;">AULA Official Shop</div>
+                            <div style="font-weight: bold; font-size: 24px; margin-top: 10px;">
+                                Warehouse 2, 11919 Wink Rd, Houston, TX 77024-7134, Metro Manila 1234
+                            </div>
+                            <div class="spx-address-grid">
+                                <div>District<br><strong>Sample</strong></div>
+                                <div>City<br><strong>Quezon</strong></div>
+                                <div>Zip Code<br><strong>1100</strong></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="spx-cod-watermark">COD</div>
+
+                    <div class="spx-bottom-section">
+                        <div class="spx-bottom-left">
+                            <div class="spx-qty-weight">
+                                <span style="font-size: 32px;">Product Quantity: ${order.items.reduce(
+                                  (sum, i) => sum + i.qty,
+                                  0
+                                )}</span><br>
+                                <span style="font-size: 32px;">Weight: 2000g</span>
+                            </div>
+                            <div style="padding: 10px; font-size: 24px; font-weight: bold;">Delivery Attempt</div>
+                            <table class="spx-attempt-table">
+                                <tr><td>1</td><td>2</td><td>3</td></tr>
+                                <tr style="height: 60px;"><td></td><td></td><td></td></tr>
+                            </table>
+                        </div>
+                        <div class="spx-bottom-center">
+                            <img src="${qrUrl}" alt="QR">
+                            <div class="spx-slogan">ANG DALI-DALI SA SHOPEE</div>
+                            <div style="font-size: 14px; font-weight: bold;">WITH ON-TIME DELIVERY GUARANTEE</div>
+                        </div>
+                        <div class="spx-bottom-right">
+                             <div style="padding: 10px; font-size: 24px; font-weight: bold; border-left: 3px solid #000;">Return Attempt</div>
+                             <table class="spx-attempt-table" style="border-left: 3px solid #000;">
+                                <tr><td>1</td><td>2</td><td>3</td></tr>
+                                <tr style="height: 60px;"><td></td><td></td><td></td></tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+        // Ensure fonts AND QR code are loaded
+        const logoImg = new Image();
+        logoImg.src = qrUrl;
+
+        const printWhenReady = () => {
+          setTimeout(() => {
+            window.print();
+          }, 800);
+        };
+
+        logoImg.onload = () => {
+          if (document.fonts) {
+            document.fonts.ready.then(printWhenReady);
+          } else {
+            printWhenReady();
+          }
+        };
+
+        logoImg.onerror = () => {
+          console.error("QR Code failed to load");
+          printWhenReady();
+        };
+      };
+
+      function getStatusColor(status) {
+        switch (status?.toLowerCase()) {
+          case "pending":
+            return "warning";
+          case "shipped":
+            return "primary";
+          case "delivered":
+            return "success";
+          case "cancelled":
+            return "danger";
+          default:
+            return "secondary";
+        }
+      }
+    </script>
+  </body>
+</html>

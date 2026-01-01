@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="My Account | ROTOBOX" />
+    <title>Account - ROTOBOX</title>
+    <link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/rotobox.css" rel="stylesheet" />
+    <style>
+      .account-header {
+        margin-bottom: 3rem;
+      }
+      .account-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+      }
+      .logout-link {
+        color: #000;
+        text-decoration: underline;
+        font-size: 0.9rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .logout-link:hover {
+        color: #333;
+      }
+      .section-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+      }
+    </style>
+  </head>
+
+  <body class="bg-white">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-md sticky-top bg-white border-bottom">
+      <div class="container">
+        <a class="navbar-brand fw-bold" href="index.html">ROTOBOX</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarCollapse"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+          <ul
+            class="navbar-nav mx-auto mb-2 mb-md-0 gap-4 small text-uppercase fw-bold"
+          >
+            <li class="nav-item">
+              <a class="nav-link text-dark" href="index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-dark" href="features.html">About Us</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link text-dark" href="support.html">FAQs</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-dark" href="contact.html">Contact</a>
+            </li>
+          </ul>
+          <div class="d-flex gap-3 align-items-center">
+            <a href="#" class="text-dark"
+              ><svg
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.35-4.35" /></svg
+            ></a>
+            <!-- Wishlist Icon -->
+            <a
+              href="javascript:void(0)"
+              class="text-dark position-relative"
+              id="wishlistBtnNav"
+            >
+              <svg
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.51 4.05 3 5.5l7 7Z"
+                />
+              </svg>
+              <span
+                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                id="wishlistCountNav"
+                style="font-size: 0.6rem"
+                >0</span
+              >
+            </a>
+            <!-- User Icon (Active Page) -->
+            <a href="account.html" class="text-dark"
+              ><svg
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" /></svg
+            ></a>
+            <!-- Cart Icon -->
+            <a
+              href="cart.html"
+              class="text-dark position-relative view-cart-trigger"
+            >
+              <svg
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                viewBox="0 0 24 24"
+              >
+                <circle cx="9" cy="21" r="1"></circle>
+                <circle cx="20" cy="21" r="1"></circle>
+                <path
+                  d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"
+                ></path>
+              </svg>
+              <span
+                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-black"
+                id="cartCountNav"
+                style="font-size: 0.6rem"
+                >0</span
+              >
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <main class="container py-5">
+      <div class="account-header">
+        <h1 class="account-title">Account</h1>
+        <a id="logoutLink" class="logout-link">
+          <svg
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+          Log out
+        </a>
+      </div>
+
+      <div class="row">
+        <!-- Order History -->
+        <div class="col-md-8 mb-5">
+          <h2 class="section-title">Order history</h2>
+          <div id="orderHistoryContainer">
+            <p class="text-muted" id="noOrdersMsg">
+              You haven't placed any orders yet.
+            </p>
+            <!-- Orders will be injected here dynamically if they exist -->
+          </div>
+        </div>
+
+        <!-- Account Details -->
+        <div class="col-md-4">
+          <h2 class="section-title">Account details</h2>
+          <div id="accountDetailsContent">
+            <p class="fw-bold mb-1" id="accountName">Loading...</p>
+            <p class="text-muted mb-1" id="accountLocation">Philippines</p>
+            <!-- Hardcoded based on screenshot for now -->
+            <p class="mt-3">
+              <a href="#" class="text-dark text-decoration-underline small"
+                >View addresses (1)</a
+              >
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Main Logic & Cart -->
+    <script src="js/main.js"></script>
+    <script src="js/cart.js"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Auth Check
+        const currentUserRaw = localStorage.getItem("currentUser");
+        if (!currentUserRaw) {
+          window.location.replace("login.html");
+          return;
+        }
+
+        const user = JSON.parse(currentUserRaw);
+
+        // --- Populate Details ---
+        const accountNameEl = document.getElementById("accountName");
+        const accountLocationEl = document.getElementById("accountLocation");
+
+        if (accountNameEl) {
+          accountNameEl.textContent = user.username || user.email || "Customer";
+        }
+
+        // --- Load Orders ---
+        loadOrders(user.id);
+
+        async function loadOrders(userId) {
+          const container = document.getElementById("orderHistoryContainer");
+          if (!container) return;
+
+          // If userId is missing (e.g. older localstorage format), try to handle or fail
+          if (!userId) {
+            container.innerHTML =
+              '<p class="text-muted">User ID not found. Please log in again.</p>';
+            return;
+          }
+
+          try {
+            const response = await fetch(`../api/orders.php?user_id=${userId}`);
+            const orders = await response.json();
+
+            if (orders.error) {
+              container.innerHTML = `<p class="text-danger">Error loading orders: ${orders.error}</p>`;
+              return;
+            }
+
+            if (!Array.isArray(orders) || orders.length === 0) {
+              container.innerHTML =
+                '<p class="text-muted">You haven\'t placed any orders yet.</p>';
+              return;
+            }
+
+            // Render Orders
+            container.innerHTML = orders
+              .map((order) => {
+                const statusColor = getStatusColor(order.status);
+                const formattedDate = new Date(order.date).toLocaleDateString(
+                  undefined,
+                  { year: "numeric", month: "long", day: "numeric" }
+                );
+
+                const itemsHtml = order.items
+                  .map(
+                    (item) => `
+                        <div class="d-flex justify-content-between small mb-1">
+                            <span>${item.product_name} x${item.quantity}</span>
+                            <span>₱${parseFloat(
+                              item.subtotal
+                            ).toLocaleString()}</span>
+                        </div>
+                    `
+                  )
+                  .join("");
+
+                return `
+                        <div class="card mb-3 border-0 shadow-sm">
+                            <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="fw-bold">Order #${
+                                      order.id
+                                    }</span>
+                                    <span class="text-muted small ms-2">${formattedDate}</span>
+                                </div>
+                                <span class="badge bg-${statusColor}">${
+                  order.status || "Pending"
+                }</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    ${itemsHtml}
+                                </div>
+                                <div class="d-flex justify-content-between border-top pt-2 fw-bold">
+                                    <span>Total</span>
+                                    <span>₱${parseFloat(
+                                      order.total
+                                    ).toLocaleString()}</span>
+                                </div>
+                                <div class="mt-3">
+                                   <!-- Future: Add 'Track Order' button if courier link exists -->
+                                   <small class="text-muted">Courier: ${
+                                     order.courier || "Standard"
+                                   }</small>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+              })
+              .join("");
+          } catch (e) {
+            console.error(e);
+            container.innerHTML =
+              '<p class="text-danger">Failed to load order history.</p>';
+          }
+        }
+
+        function getStatusColor(status) {
+          if (!status) return "secondary";
+          switch (status.toLowerCase()) {
+            case "pending":
+              return "warning";
+            case "processing":
+              return "info";
+            case "shipped":
+              return "primary";
+            case "delivered":
+              return "success";
+            case "cancelled":
+              return "danger";
+            default:
+              return "secondary";
+          }
+        }
+
+        // --- Logout Logic ---
+        document.getElementById("logoutLink").addEventListener("click", (e) => {
+          e.preventDefault();
+          localStorage.removeItem("currentUser");
+          window.location.replace("login.html");
+        });
+      });
+    </script>
+  </body>
+</html>

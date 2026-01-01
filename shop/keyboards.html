@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Keyboards | ROTOBOX</title>
+    <link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/rotobox.css" rel="stylesheet" />
+  </head>
+
+  <body>
+    <div
+      id="promoBanner"
+      class="bg-black text-white announcement-bar text-center"
+    >
+      <span>WELCOME TO ROTOBOX CLONE – PREMIUM PERIPHERALS & AUDIO</span>
+    </div>
+    <nav class="navbar navbar-expand-md sticky-top">
+      <div class="container">
+        <a class="navbar-brand" href="index.html">ROTOBOX</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarCollapse"
+          aria-controls="navbarCollapse"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+          <ul class="navbar-nav mx-auto mb-2 mb-md-0 gap-4">
+            <li class="nav-item">
+              <a class="nav-link" href="index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="features.html">About Us</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="support.html">FAQs</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="contact.html">Contact</a>
+            </li>
+          </ul>
+          <div class="d-flex gap-3 align-items-center">
+            <a href="#" class="text-dark"
+              ><svg
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.35-4.35" /></svg
+            ></a>
+            <!-- Wishlist Icon -->
+            <a
+              href="javascript:void(0)"
+              class="text-dark position-relative"
+              id="wishlistBtnNav"
+            >
+              <svg
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.51 4.05 3 5.5l7 7Z"
+                />
+              </svg>
+              <span
+                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                id="wishlistCountNav"
+                style="font-size: 0.6rem"
+                >0</span
+              >
+            </a>
+            <a href="login.html" class="text-dark"
+              ><svg
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" /></svg
+            ></a>
+            <!-- Cart Icon -->
+            <a
+              href="cart.html"
+              class="text-dark position-relative view-cart-trigger"
+            >
+              <svg
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                viewBox="0 0 24 24"
+              >
+                <circle cx="9" cy="21" r="1"></circle>
+                <circle cx="20" cy="21" r="1"></circle>
+                <path
+                  d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"
+                ></path>
+              </svg>
+              <span
+                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-black"
+                id="cartCountNav"
+                style="font-size: 0.6rem"
+                >0</span
+              >
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <main class="py-5">
+      <div class="container my-5">
+        <h1 class="fw-bold text-center mb-5">MECHANICAL KEYBOARDS</h1>
+
+        <!-- Search and Filter Section -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="row mb-5 align-items-center">
+              <div class="col-12 d-flex flex-wrap gap-4 align-items-center">
+                <span class="fw-bold fs-5">Filter:</span>
+
+                <!-- Availability Dropdown -->
+                <div class="filter-group position-relative">
+                  <button
+                    class="filter-toggle d-flex align-items-center justify-content-between gap-2 border-0 bg-transparent fw-bold"
+                    style="
+                      border-bottom: 2px solid black !important;
+                      padding-bottom: 2px;
+                      cursor: pointer;
+                    "
+                  >
+                    Availability
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 12 12"
+                      fill="none"
+                      stroke="currentColor"
+                    >
+                      <path d="M2 4L6 8L10 4" stroke-width="1.5" />
+                    </svg>
+                  </button>
+
+                  <div
+                    class="filter-dropdown position-absolute bg-white border p-3 shadow-sm mt-2"
+                    style="width: 300px; z-index: 1000; display: none"
+                    id="filterAvailabilityDropdown"
+                  >
+                    <div
+                      class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom"
+                    >
+                      <span class="text-muted small selected-count"
+                        >0 selected</span
+                      >
+                      <a
+                        href="#"
+                        id="resetAvailability"
+                        class="text-decoration-underline text-muted small"
+                        >Reset</a
+                      >
+                    </div>
+                    <div class="form-check mb-2">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        name="filter_availability"
+                        value="in_stock"
+                        id="filterInStock"
+                      />
+                      <label
+                        class="form-check-label d-flex justify-content-between w-100"
+                        for="filterInStock"
+                      >
+                        <span>In stock</span>
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        name="filter_availability"
+                        value="out_of_stock"
+                        id="filterOutStock"
+                      />
+                      <label
+                        class="form-check-label d-flex justify-content-between w-100"
+                        for="filterOutStock"
+                      >
+                        <span>Out of stock</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Price Dropdown -->
+                <div class="filter-group position-relative">
+                  <button
+                    class="filter-toggle d-flex align-items-center justify-content-between gap-2 border-0 bg-transparent fw-bold"
+                    style="
+                      border-bottom: 2px solid black !important;
+                      padding-bottom: 2px;
+                      cursor: pointer;
+                    "
+                  >
+                    Price
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 12 12"
+                      fill="none"
+                      stroke="currentColor"
+                    >
+                      <path d="M2 4L6 8L10 4" stroke-width="1.5" />
+                    </svg>
+                  </button>
+
+                  <div
+                    class="filter-dropdown position-absolute bg-white border p-3 shadow-sm mt-2"
+                    style="width: 340px; z-index: 1000; display: none"
+                    id="filterPriceDropdown"
+                  >
+                    <div
+                      class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom"
+                    >
+                      <span class="text-muted small"
+                        >The highest price is ₱99,999.00</span
+                      >
+                      <a
+                        href="#"
+                        id="resetPrice"
+                        class="text-decoration-underline text-muted small"
+                        >Reset</a
+                      >
+                    </div>
+                    <div class="d-flex gap-2 align-items-center">
+                      <div class="input-group">
+                        <span
+                          class="input-group-text bg-transparent border-end-0"
+                          >₱</span
+                        >
+                        <input
+                          type="number"
+                          class="form-control border-start-0"
+                          id="filterPriceFrom"
+                          placeholder="From"
+                        />
+                      </div>
+                      <div class="input-group">
+                        <span
+                          class="input-group-text bg-transparent border-end-0"
+                          >₱</span
+                        >
+                        <input
+                          type="number"
+                          class="form-control border-start-0"
+                          id="filterPriceTo"
+                          placeholder="To"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="ms-auto text-muted small">
+                  <span id="resultsCount">0</span> products
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"
+          id="productsContainer"
+          data-default-category="keyboard"
+        >
+          <!-- Products will be loaded here via main.js (fetchAndRenderProducts) -->
+          <div class="col-12 text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2 text-muted">Loading products from database...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Detail Modal (shared with index) -->
+      <div
+        class="modal fade"
+        id="productModal"
+        tabindex="-1"
+        aria-labelledby="productModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="productModalLabel"></h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <img
+                id="modalProductImg"
+                src=""
+                class="img-fluid mb-3 w-100"
+                style="max-height: 350px; object-fit: contain"
+                alt="Product Image"
+              />
+              <h6 class="text-muted mb-2" id="modalProductPrice"></h6>
+              <ul id="modalProductFeatures" class="mb-2"></ul>
+              <p id="modalProductDesc"></p>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                id="addToWishlistBtn"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  class="me-2"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    d="M8 2.748-.717-1.737C5.6-.281 8 2.223 8 2.223s2.4-2.502 6.717-.412c1.342 1.292 1.342 3.385 0 4.677L8 15-8.717-8.385c-1.342-1.292-1.342-3.385 0-4.677z"
+                  />
+                </svg>
+                Add to Wishlist
+              </button>
+              <button type="button" class="btn btn-primary" id="addToCartBtn">
+                Add to Cart
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cart Modal -->
+      <div
+        class="modal fade"
+        id="cartModal"
+        tabindex="-1"
+        aria-labelledby="cartModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="cartModalLabel">Your Cart</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <p id="cartEmptyMessage" class="text-muted mb-0">
+                Your cart is empty.
+              </p>
+              <div id="cartItemsWrapper" class="table-responsive d-none mt-3">
+                <table class="table align-middle mb-0">
+                  <thead>
+                    <tr>
+                      <th scope="col">Product</th>
+                      <th scope="col">Price</th>
+                      <th scope="col" class="text-center">Qty</th>
+                      <th scope="col" class="text-end">Subtotal</th>
+                      <th scope="col" class="text-end"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="cartItems"></tbody>
+                </table>
+              </div>
+              <div class="d-flex justify-content-end mt-3 fw-bold">
+                <span>Total:&nbsp;</span><span id="cartTotal">₱0.00</span>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                id="clearCartBtn"
+              >
+                Clear Cart
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="cartCheckoutBtn"
+              >
+                Checkout
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Wishlist Modal -->
+      <div
+        class="modal fade"
+        id="wishlistModal"
+        tabindex="-1"
+        aria-labelledby="wishlistModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="wishlistModalLabel">Wishlist</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <p id="wishlistEmptyMessage" class="text-muted mb-0">
+                Your wishlist is empty.
+              </p>
+              <div
+                id="wishlistItemsWrapper"
+                class="table-responsive d-none mt-3"
+              >
+                <table class="table align-middle mb-0">
+                  <thead>
+                    <tr>
+                      <th scope="col">Product</th>
+                      <th scope="col">Price</th>
+                      <th scope="col" class="text-end">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="wishlistItems"></tbody>
+                </table>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-primary"
+                data-bs-dismiss="modal"
+              >
+                Continue Shopping
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/search-filter.js"></script>
+    <script src="js/main.js?v=5"></script>
+    <script src="js/cart.js?v=debug_fix_1"></script>
+  </body>
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sales Reports - AULA Admin</title>
+    <link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="admin.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <!-- html2pdf Library for downloading reports -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  </head>
+
+  <body>
+    <div class="d-flex" id="wrapper">
+      <div id="sidebar-wrapper">
+        <div class="sidebar-heading">AULA Admin</div>
+        <div class="list-group list-group-flush">
+          <a
+            href="dashboard.html"
+            class="list-group-item list-group-item-action"
+          >
+            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+          </a>
+          <a href="orders.html" class="list-group-item list-group-item-action">
+            <i class="fas fa-shopping-cart me-2"></i>Orders
+          </a>
+          <a
+            href="products.html"
+            class="list-group-item list-group-item-action"
+          >
+            <i class="fas fa-box me-2"></i>Products
+          </a>
+          <a
+            href="inventory.html"
+            class="list-group-item list-group-item-action"
+          >
+            <i class="fas fa-warehouse me-2"></i>Inventory
+            <!-- updated -->
+          </a>
+          <a href="users.html" class="list-group-item list-group-item-action">
+            <i class="fas fa-users me-2"></i>Users
+          </a>
+          <a
+            href="reports.html"
+            class="list-group-item list-group-item-action active"
+          >
+            <i class="fas fa-chart-line me-2"></i>Reports
+          </a>
+        </div>
+      </div>
+
+      <div id="page-content-wrapper">
+        <nav class="navbar navbar-expand-lg">
+          <div class="container-fluid">
+            <h4 class="mb-0">Sales Reports</h4>
+            <div class="ms-auto d-flex align-items-center">
+              <span class="me-3 text-muted"
+                >Welcome,
+                <span id="adminName" class="fw-bold text-white"
+                  >Admin</span
+                ></span
+              >
+              <a
+                href="#"
+                id="adminLogoutBtn"
+                class="btn btn-outline-danger btn-sm"
+                >Logout</a
+              >
+            </div>
+          </div>
+        </nav>
+
+        <div class="container-fluid">
+          <div class="row mb-4">
+            <div class="col-12 text-end">
+              <button class="btn btn-success" id="downloadPdfBtn">
+                <i class="fas fa-file-download me-2"></i>Download PDF Report
+              </button>
+            </div>
+          </div>
+
+          <div id="printableReport">
+            <div class="card mb-4">
+              <div class="card-header bg-transparent">
+                <h4 class="mb-0">Sales Summary</h4>
+                <small class="text-muted"
+                  >Report Generated: <span id="reportDate"></span
+                ></small>
+              </div>
+              <div class="card-body">
+                <div class="row text-center mb-4">
+                  <div class="col-md-4">
+                    <h2 class="text-primary fw-bold" id="repTotalSales">
+                      ₱0.00
+                    </h2>
+                    <p class="text-muted">Total Revenue</p>
+                  </div>
+                  <div class="col-md-4">
+                    <h2 class="text-success fw-bold" id="repTotalOrders">0</h2>
+                    <p class="text-muted">Total Orders</p>
+                  </div>
+                  <div class="col-md-4">
+                    <h2 class="text-warning fw-bold" id="repPendingOrders">
+                      0
+                    </h2>
+                    <p class="text-muted">Pending Orders</p>
+                  </div>
+                </div>
+
+                <hr />
+
+                <h5 class="mb-3">Order Breakdown</h5>
+                <table class="table table-bordered">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Date</th>
+                      <th>Order ID</th>
+                      <th>Status</th>
+                      <th class="text-end">Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody id="reportTableBody">
+                    <!-- Populated by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="admin.js?v=logout_path_fix_v4"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("reportDate").textContent =
+          new Date().toLocaleString();
+        loadReportData();
+
+        document
+          .getElementById("downloadPdfBtn")
+          .addEventListener("click", () => {
+            const element = document.getElementById("printableReport");
+            const opt = {
+              margin: 0.5,
+              filename: "aula_sales_report.pdf",
+              image: { type: "jpeg", quality: 0.98 },
+              html2canvas: { scale: 2 },
+              jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
+            };
+            html2pdf().set(opt).from(element).save();
+          });
+      });
+
+      function loadReportData() {
+        const ORDERS_KEY = "aula-orders";
+        const orders = JSON.parse(localStorage.getItem(ORDERS_KEY) || "[]");
+
+        // Stats
+        let totalSales = 0;
+        let pending = 0;
+
+        const tableRows = orders
+          .map((o) => {
+            let amount = 0;
+            if (typeof o.total === "number") amount = o.total;
+            else if (typeof o.total === "string")
+              amount = parseFloat(o.total.replace(/[^\d.]/g, "")) || 0;
+
+            totalSales += amount;
+            if (o.status === "Pending") pending++;
+
+            return `
+                    <tr>
+                        <td>${new Date(o.date).toLocaleDateString()}</td>
+                        <td>${o.id}</td>
+                        <td>${o.status}</td>
+                        <td class="text-end">₱${amount.toLocaleString(
+                          undefined,
+                          { minimumFractionDigits: 2 }
+                        )}</td>
+                    </tr>
+                `;
+          })
+          .join("");
+
+        document.getElementById("repTotalSales").textContent =
+          "₱" +
+          totalSales.toLocaleString(undefined, { minimumFractionDigits: 2 });
+        document.getElementById("repTotalOrders").textContent = orders.length;
+        document.getElementById("repPendingOrders").textContent = pending;
+        document.getElementById("reportTableBody").innerHTML =
+          tableRows ||
+          '<tr><td colspan="4" class="text-center">No data availble</td></tr>';
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inventory Management - AULA Admin</title>
+    <link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="admin.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+
+  <body>
+    <div class="d-flex" id="wrapper">
+      <div id="sidebar-wrapper">
+        <div class="sidebar-heading">AULA Admin</div>
+        <div class="list-group list-group-flush">
+          <a
+            href="dashboard.html"
+            class="list-group-item list-group-item-action"
+          >
+            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+          </a>
+          <a href="orders.html" class="list-group-item list-group-item-action">
+            <i class="fas fa-shopping-cart me-2"></i>Orders
+          </a>
+          <a
+            href="products.html"
+            class="list-group-item list-group-item-action"
+          >
+            <i class="fas fa-box me-2"></i>Products
+          </a>
+          <a
+            href="inventory.html"
+            class="list-group-item list-group-item-action active"
+          >
+            <i class="fas fa-warehouse me-2"></i>Inventory
+          </a>
+          <a href="users.html" class="list-group-item list-group-item-action">
+            <i class="fas fa-users me-2"></i>Users
+          </a>
+          <a href="reports.html" class="list-group-item list-group-item-action">
+            <i class="fas fa-chart-line me-2"></i>Reports
+          </a>
+        </div>
+      </div>
+
+      <div id="page-content-wrapper">
+        <nav class="navbar navbar-expand-lg">
+          <div class="container-fluid">
+            <h4 class="mb-0">Inventory & Stock</h4>
+            <div class="ms-auto d-flex align-items-center">
+              <span class="me-3 text-muted"
+                >Welcome,
+                <span id="adminName" class="fw-bold text-white"
+                  >Admin</span
+                ></span
+              >
+              <a
+                href="#"
+                id="adminLogoutBtn"
+                class="btn btn-outline-danger btn-sm"
+                >Logout</a
+              >
+            </div>
+          </div>
+        </nav>
+
+        <div class="container-fluid p-4">
+          <ul class="nav nav-tabs mb-4" id="inventoryTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link active"
+                id="stock-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#stock-pane"
+                type="button"
+                role="tab"
+              >
+                Stock Control
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link"
+                id="suppliers-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#suppliers-pane"
+                type="button"
+                role="tab"
+              >
+                Suppliers
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link"
+                id="categories-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#categories-pane"
+                type="button"
+                role="tab"
+              >
+                Categories
+              </button>
+            </li>
+          </ul>
+
+          <div class="tab-content" id="inventoryTabContent">
+            <!-- STOCK PANE -->
+            <div
+              class="tab-pane fade show active"
+              id="stock-pane"
+              role="tabpanel"
+            >
+              <div class="row g-4">
+                <div class="col-md-7">
+                  <div class="card h-100">
+                    <div class="card-header bg-transparent py-3">
+                      <h5 class="mb-0">Stock Levels</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                          <thead>
+                            <tr>
+                              <th>Product</th>
+                              <th>Current Stock</th>
+                              <th>Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody id="stockTableBody">
+                            <tr>
+                              <td colspan="3" class="text-center">
+                                Loading...
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-5">
+                  <div class="card h-100">
+                    <div class="card-header bg-transparent py-3">
+                      <h5 class="mb-0">Recent Logs</h5>
+                    </div>
+                    <div class="card-body">
+                      <ul
+                        class="list-group list-group-flush"
+                        id="stockLogsList"
+                      >
+                        <li class="list-group-item text-center text-muted">
+                          Loading logs...
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SUPPLIERS PANE -->
+            <div class="tab-pane fade" id="suppliers-pane" role="tabpanel">
+              <div class="card">
+                <div
+                  class="card-header bg-transparent py-3 d-flex justify-content-between align-items-center"
+                >
+                  <h5 class="mb-0">Suppliers</h5>
+                  <button
+                    class="btn btn-primary btn-sm"
+                    data-bs-toggle="modal"
+                    data-bs-target="#addSupplierModal"
+                  >
+                    <i class="fas fa-plus me-2"></i>Add Supplier
+                  </button>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Contact Person</th>
+                          <th>Email</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody id="suppliersTableBody">
+                        <tr>
+                          <td colspan="4" class="text-center">Loading...</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- CATEGORIES PANE -->
+            <div class="tab-pane fade" id="categories-pane" role="tabpanel">
+              <div class="card">
+                <div
+                  class="card-header bg-transparent py-3 d-flex justify-content-between align-items-center"
+                >
+                  <h5 class="mb-0">Categories</h5>
+                  <button
+                    class="btn btn-primary btn-sm"
+                    data-bs-toggle="modal"
+                    data-bs-target="#addCategoryModal"
+                  >
+                    <i class="fas fa-plus me-2"></i>Add Category
+                  </button>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Description</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody id="categoriesTableBody">
+                        <tr>
+                          <td colspan="3" class="text-center">Loading...</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modals -->
+
+    <div class="modal fade" id="stockModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="stockModalTitle">Adjust Stock</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="stockForm">
+              <input type="hidden" name="product_id" id="stockProductId" />
+              <input type="hidden" name="type" id="stockType" />
+              <p id="stockProductName" class="fw-bold mb-3"></p>
+              <div class="mb-3">
+                <label class="form-label">Quantity</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  name="quantity"
+                  min="1"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Reason</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="reason"
+                  placeholder="e.g. New Shipment, Damaged"
+                />
+              </div>
+              <button type="submit" class="btn btn-primary w-100">
+                Confirm Adjustment
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="modal fade"
+      id="addSupplierModal"
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">New Supplier</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="addSupplierForm">
+              <div class="mb-3">
+                <label class="form-label">Supplier Name</label>
+                <input type="text" class="form-control" name="name" required />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Contact Person</label>
+                <input type="text" class="form-control" name="contact_person" />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" name="email" />
+              </div>
+              <button type="submit" class="btn btn-primary w-100">
+                Save Supplier
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="modal fade"
+      id="addCategoryModal"
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">New Category</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="addCategoryForm">
+              <div class="mb-3">
+                <label class="form-label">Category Name</label>
+                <input type="text" class="form-control" name="name" required />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Description</label>
+                <textarea class="form-control" name="description"></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary w-100">
+                Save Category
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="inventory.js?v=3"></script>
+    <script src="admin.js?v=logout_path_fix_v4"></script>
+  </body>
+</html>

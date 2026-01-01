@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Users - AULA Admin</title>
+    <link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="admin.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+
+  <body>
+    <div class="d-flex" id="wrapper">
+      <!-- Sidebar -->
+      <div id="sidebar-wrapper">
+        <div class="sidebar-heading">AULA Admin</div>
+        <div class="list-group list-group-flush">
+          <a
+            href="dashboard.html"
+            class="list-group-item list-group-item-action"
+          >
+            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+          </a>
+          <a href="orders.html" class="list-group-item list-group-item-action">
+            <i class="fas fa-shopping-cart me-2"></i>Orders
+          </a>
+          <a
+            href="products.html"
+            class="list-group-item list-group-item-action"
+          >
+            <i class="fas fa-box me-2"></i>Products
+          </a>
+          <a
+            href="inventory.html"
+            class="list-group-item list-group-item-action"
+          >
+            <i class="fas fa-warehouse me-2"></i>Inventory
+          </a>
+          <a
+            href="users.html"
+            class="list-group-item list-group-item-action active"
+          >
+            <i class="fas fa-users me-2"></i>Users
+          </a>
+          <a href="reports.html" class="list-group-item list-group-item-action">
+            <i class="fas fa-chart-line me-2"></i>Reports
+          </a>
+        </div>
+      </div>
+
+      <div id="page-content-wrapper">
+        <nav class="navbar navbar-expand-lg">
+          <div class="container-fluid">
+            <h4 class="mb-0">User Management</h4>
+            <div class="ms-auto d-flex align-items-center">
+              <span class="me-3 text-muted"
+                >Welcome,
+                <span id="adminName" class="fw-bold text-white"
+                  >Admin</span
+                ></span
+              >
+              <a
+                href="#"
+                id="adminLogoutBtn"
+                class="btn btn-outline-danger btn-sm"
+                >Logout</a
+              >
+            </div>
+          </div>
+        </nav>
+
+        <div class="container-fluid">
+          <div class="row">
+            <!-- Add User Form -->
+            <div class="col-md-4">
+              <div class="card p-4">
+                <h5 class="mb-3">Add New Account</h5>
+                <form id="addUserForm">
+                  <div class="mb-3">
+                    <label class="form-label">Username</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="newUsername"
+                      required
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input
+                      type="email"
+                      class="form-control"
+                      id="newEmail"
+                      required
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input
+                      type="password"
+                      class="form-control"
+                      id="newPassword"
+                      required
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Role</label>
+                    <select class="form-select" id="newRole">
+                      <option value="admin">Admin</option>
+                      <option value="customer" selected>Customer</option>
+                    </select>
+                  </div>
+                  <button type="submit" class="btn btn-primary w-100">
+                    Create Account
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            <!-- User List -->
+            <div class="col-md-8">
+              <div class="card">
+                <div class="card-header bg-transparent py-3">
+                  <h5 class="mb-0">All Users</h5>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-hover">
+                      <thead>
+                        <tr>
+                          <th>Username</th>
+                          <th>Email</th>
+                          <th>Role</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody id="userListBody"></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="admin.js?v=logout_path_fix_v4"></script>
+    <script>
+      // Specific logic for Users Page (Connected to Database)
+      document.addEventListener("DOMContentLoaded", () => {
+        loadUsers();
+
+        document
+          .getElementById("addUserForm")
+          .addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const username = document.getElementById("newUsername").value;
+            const email = document.getElementById("newEmail").value;
+            const password = document.getElementById("newPassword").value;
+            const role = document.getElementById("newRole").value;
+
+            try {
+              const response = await fetch("../api/users.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, email, password, role }),
+              });
+              const result = await response.json();
+
+              if (response.ok) {
+                alert("User created successfully!");
+                e.target.reset();
+                loadUsers();
+              } else {
+                alert("Error: " + (result.error || "Failed to create user"));
+              }
+            } catch (err) {
+              console.error(err);
+              alert("Server connection failed");
+            }
+          });
+      });
+
+      async function loadUsers() {
+        const tbody = document.getElementById("userListBody");
+        tbody.innerHTML =
+          '<tr><td colspan="4" class="text-center">Loading...</td></tr>';
+
+        try {
+          const response = await fetch("../api/users.php");
+          const users = await response.json();
+
+          if (users.error) {
+            tbody.innerHTML = `<tr><td colspan="4" class="text-center text-danger">Error: ${users.error}</td></tr>`;
+            return;
+          }
+
+          if (users.length === 0) {
+            tbody.innerHTML =
+              '<tr><td colspan="4" class="text-center">No users found in database.</td></tr>';
+            return;
+          }
+
+          tbody.innerHTML = users
+            .map(
+              (u) => `
+                    <tr>
+                        <td>${u.username}</td>
+                        <td>${u.email}</td>
+                        <td><span class="badge bg-${
+                          u.role === "admin" ? "danger" : "success"
+                        }">${u.role}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteUser('${
+                              u.username
+                            }')">Delete</button>
+                        </td>
+                    </tr>
+                `
+            )
+            .join("");
+        } catch (e) {
+          console.error(e);
+          tbody.innerHTML =
+            '<tr><td colspan="4" class="text-center text-danger">Failed to load users.</td></tr>';
+        }
+      }
+
+      window.deleteUser = async function (username) {
+        if (username === "Admin" || username === "DemoUser") {
+          // Optional client-side check, though server handles ID deletions usually
+        }
+        if (!confirm(`Delete user ${username}?`)) return;
+
+        try {
+          const response = await fetch(
+            `../api/users.php?username=${username}`,
+            { method: "DELETE" }
+          );
+          const result = await response.json();
+
+          if (response.ok) {
+            loadUsers();
+          } else {
+            alert("Error: " + (result.error || "Failed to delete"));
+          }
+        } catch (e) {
+          console.error(e);
+          alert("Server connection failed");
+        }
+      };
+    </script>
+  </body>
+</html>

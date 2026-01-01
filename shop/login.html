@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Login to ROTOBOX" />
+    <title>Login | ROTOBOX</title>
+    <link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/rotobox.css" rel="stylesheet" />
+    <style>
+      /* Auth Specific Styles */
+      .auth-container {
+        max-width: 400px;
+        margin: 4rem auto;
+        padding: 0 1rem;
+      }
+
+      .auth-title {
+        font-weight: 700;
+        font-size: 2rem;
+        margin-bottom: 2rem;
+        text-align: center;
+      }
+
+      .form-control {
+        padding: 0.75rem 1rem;
+        border: 1px solid #e5e5e5;
+        border-radius: 0;
+        background-color: #f9f9f9;
+        margin-bottom: 1rem;
+      }
+
+      .form-control:focus {
+        border-color: black;
+        box-shadow: none;
+        background-color: white;
+      }
+
+      .btn-auth {
+        display: block;
+        width: 100%;
+        padding: 0.75rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        border-radius: 0;
+      }
+
+      .btn-black {
+        background: black;
+        color: white;
+        border: 1px solid black;
+      }
+
+      .btn-black:hover {
+        background: #333;
+        border-color: #333;
+        color: white;
+      }
+
+      .auth-links {
+        text-align: center;
+        margin-top: 1.5rem;
+        font-size: 0.9rem;
+      }
+
+      .auth-links a {
+        color: black;
+        text-decoration: underline;
+        cursor: pointer;
+      }
+
+      /* Tab Switching Logic */
+      .auth-form-view {
+        display: none;
+      }
+
+      .auth-form-view.active {
+        display: block;
+      }
+
+      /* Validation Styles */
+      .validation-criteria {
+        font-size: 0.75rem;
+        color: #6c757d;
+        display: none; /* Hidden by default for cleaner look, shown if needed or we can just show always */
+        margin-bottom: 1rem;
+        text-align: left;
+      }
+
+      .criteria-item {
+        margin-right: 10px;
+        display: inline-block;
+      }
+
+      .criteria-item.pass {
+        color: #198754;
+        font-weight: bold;
+      }
+      .criteria-item.pass::before {
+        content: "✓ ";
+      }
+
+      .invalid {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: -0.5rem;
+        margin-bottom: 1rem;
+        display: block;
+      }
+
+      /* Cooldown Overlay */
+      #cooldownOverlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.8);
+        z-index: 9999;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      #cooldownOverlay.active {
+        display: flex;
+      }
+    </style>
+  </head>
+
+  <body class="bg-white">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-md sticky-top bg-white border-bottom">
+      <div class="container">
+        <a class="navbar-brand" href="index.html">ROTOBOX</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarCollapse"
+          aria-controls="navbarCollapse"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+          <ul class="navbar-nav mx-auto mb-2 mb-md-0 gap-4">
+            <li class="nav-item">
+              <a class="nav-link" href="index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="features.html">About Us</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="support.html">FAQs</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="contact.html">Contact</a>
+            </li>
+          </ul>
+          <div class="d-flex gap-3 align-items-center">
+            <!-- Search Icon -->
+            <a href="#" class="text-dark"
+              ><svg
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.35-4.35" /></svg
+            ></a>
+            <!-- Wishlist Icon -->
+            <a
+              href="javascript:void(0)"
+              class="text-dark position-relative"
+              id="wishlistBtnNav"
+            >
+              <svg
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.51 4.05 3 5.5l7 7Z"
+                />
+              </svg>
+              <span
+                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                id="wishlistCountNav"
+                style="font-size: 0.6rem"
+                >0</span
+              >
+            </a>
+            <!-- User Icon -->
+            <a href="login.html" class="text-dark"
+              ><svg
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" /></svg
+            ></a>
+            <!-- Cart Icon -->
+            <a
+              href="cart.html"
+              class="text-dark position-relative view-cart-trigger"
+            >
+              <svg
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                viewBox="0 0 24 24"
+              >
+                <circle cx="9" cy="21" r="1"></circle>
+                <circle cx="20" cy="21" r="1"></circle>
+                <path
+                  d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"
+                ></path>
+              </svg>
+              <span
+                id="cartCountNav"
+                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-black"
+                style="font-size: 0.6rem"
+                >0</span
+              >
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Login Content -->
+    <main>
+      <div class="container">
+        <div class="auth-container">
+          <!-- Login Form -->
+          <form id="loginForm" class="auth-form-view active">
+            <h1 class="auth-title">Login</h1>
+            <div
+              id="loginError"
+              class="validation-feedback text-danger text-center"
+            ></div>
+
+            <input
+              type="text"
+              id="loginUsername"
+              class="form-control"
+              placeholder="Email or Username"
+              required
+            />
+            <input
+              type="password"
+              id="loginPassword"
+              class="form-control"
+              placeholder="Password"
+              required
+            />
+
+            <div class="d-flex justify-content-between mb-4 small">
+              <!-- Using tabRegister id logic to switch to register mode -->
+              <a href="#" class="text-muted text-decoration-underline"
+                >Forgot your password?</a
+              >
+            </div>
+
+            <button type="submit" id="loginBtn" class="btn btn-black btn-auth">
+              Sign in
+            </button>
+            <div class="auth-links">
+              <a id="tabRegister">Create account</a>
+            </div>
+
+            <div class="text-center mt-3">
+              <button
+                type="button"
+                id="demoBtn"
+                class="btn btn-outline-dark btn-sm rounded-pill px-4"
+              >
+                Demo Account (Admin)
+              </button>
+            </div>
+          </form>
+
+          <!-- Register Form -->
+          <form id="registerForm" class="auth-form-view">
+            <h1 class="auth-title">Create account</h1>
+
+            <input
+              type="text"
+              id="regUsername"
+              class="form-control"
+              placeholder="Username"
+              required
+            />
+            <input
+              type="email"
+              id="regEmail"
+              class="form-control"
+              placeholder="Email"
+              required
+            />
+            <input
+              type="password"
+              id="regPassword"
+              class="form-control"
+              placeholder="Password"
+              required
+            />
+
+            <div class="validation-criteria d-block mb-3">
+              <span id="crit-length" class="criteria-item">8-15 chars</span>
+              <span id="crit-upper" class="criteria-item">Upper</span>
+              <span id="crit-lower" class="criteria-item">Lower</span>
+              <span id="crit-number" class="criteria-item">Num</span>
+              <span id="crit-symbol" class="criteria-item">Symbol</span>
+            </div>
+
+            <button type="submit" id="regBtn" class="btn btn-black btn-auth">
+              Create
+            </button>
+            <div class="auth-links">
+              <a id="tabLogin">Back to Login</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <div id="cooldownOverlay">
+      <h3 class="fw-bold">Too many attempts</h3>
+      <p>
+        Please wait
+        <span id="cooldownTimer" class="fw-bold text-danger">3:00</span> before
+        trying again.
+      </p>
+    </div>
+
+    <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Reuse the auth script -->
+    <script src="../auth/auth.js"></script>
+    <script src="cart.js"></script>
+  </body>
+</html>
